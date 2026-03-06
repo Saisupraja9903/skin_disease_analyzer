@@ -55,10 +55,10 @@ async def predict(file: UploadFile = File(...)):
             cv2.cvtColor(cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
         )
 
-        # Run model prediction
-        top_3_predictions = ensemble_classify(img)
+        # Run model prediction – the helper now returns the top eight
+        top_predictions = ensemble_classify(img)
 
-        return JSONResponse(content={"predictions": top_3_predictions})
+        return JSONResponse(content={"predictions": top_predictions})
 
     except Exception as e:
         user_logger.exception("Prediction failed.")

@@ -1,16 +1,36 @@
+
+
+import os
 import torch
 import torchvision.models as models
 from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
 
-# Load Dataset
-transform = transforms.Compose([
+
+
+
+# directory structure expected by the script: dataset/train_set/<class-name>/*.jpg
+# You can change DATA_DIR to point at your own folder if necessary.
+DATA_DIR = os.getenv("SKIN_DATA_DIR", "dataset/train_set")
+
+if not os.path.isdir(DATA_DIR):
+    raise FileNotFoundError(
+        f"Training data directory '{DATA_DIR}' does not exist. "
+        "Create it with one subdirectory per class (Cellulitis, Impetigo, etc.)."
+    )
+
+# Data augmentation transforms
+train_transform = transforms.Compose([
     transforms.Resize((224, 224)),
+    transforms.RandomRotation(20),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomZoom((0.9, 1.1)),
+    transforms.ColorJitter(brightness=0.2),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-train_dataset = datasets.ImageFolder(root="dataset/train_set", transform=transform)
+train_dataset = datasets.ImageFolder(root=DATA_DIR, transform=train_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 # Model Training Function

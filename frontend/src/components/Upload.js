@@ -393,8 +393,10 @@ function Upload() {
 
     try {
       const response = await axios.post(`${BASE_URL}/api/upload`, formData);
-      setQuestions(response.data.questions);
-      setAwaitingSymptoms(true);
+    console.log("Upload response:", response.data);
+
+setQuestions(response.data.questions);
+setAwaitingSymptoms(true);
     } catch (err) {
       alert("Upload failed");
     }
@@ -425,7 +427,8 @@ function Upload() {
       location
     });
 
-    setFinalReport(response.data);
+    console.log("Full report received:", response.data);
+setFinalReport(response.data);
     setIsSubmitting(false);
   };
 
@@ -503,11 +506,99 @@ function Upload() {
             {finalReport.symptoms_care}
           </ReactMarkdown>
 
-          <h3>Nearby Hospitals</h3>
-          {finalReport.hospitals.map((h, i) => (
-            <p key={i}>{h.name} - {h.location}</p>
-          ))}
+          {finalReport.fallback_message && (
+  <p style={{
+    color: "#b45309",
+    background: "#fff3cd",
+    padding: "10px",
+    borderRadius: "6px",
+    marginBottom: "15px"
+  }}>
+    {finalReport.fallback_message}
+  </p>
+)}
+<h3>Nearby Hospitals</h3>
 
+{finalReport.hospitals && finalReport.hospitals.length > 0 ? (
+
+<div
+style={{
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))",
+gap:"20px"
+}}
+>
+
+{finalReport.hospitals.map((hospital,index)=>(
+<div key={index}
+style={{
+border:"1px solid #ddd",
+borderRadius:"10px",
+background:"#fff",
+boxShadow:"0 2px 5px rgba(0,0,0,0.1)"
+}}
+>
+
+<iframe
+title={hospital.name}
+width="100%"
+height="200"
+src={`https://maps.google.com/maps?q=${hospital.lat},${hospital.lon}&z=14&output=embed`}
+frameBorder="0"
+/>
+
+<div style={{padding:"15px"}}>
+
+<h4>{hospital.name}</h4>
+
+<p>{hospital.location}</p>
+
+<a
+href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lon}`}
+target="_blank"
+rel="noopener noreferrer"
+style={{
+display:"inline-block",
+marginTop:"10px",
+padding:"8px 12px",
+background:"#2b5cff",
+color:"#fff",
+borderRadius:"6px",
+textDecoration:"none"
+}}
+>
+Get Directions
+</a>
+
+</div>
+</div>
+))}
+</div>
+
+) : (
+
+<div style={{marginTop:"20px"}}>
+
+{/* <p>No specific dermatologist found in this location.</p> */}
+
+<a
+href={`https://www.google.com/maps/search/hospitals+near+${location}`}
+target="_blank"
+rel="noopener noreferrer"
+style={{
+padding:"10px 15px",
+background:"#2b5cff",
+color:"#fff",
+borderRadius:"6px",
+textDecoration:"none"
+}}
+>
+View Nearby Hospitals on Google Maps
+</a>
+
+</div>
+
+)}
           <button onClick={handleDownloadPDF}>Download PDF</button>
         </div>
       }
