@@ -61,21 +61,20 @@ def train_model(model, save_path, is_regression=False):
 
 # Train EfficientNet
 efficientnet = models.efficientnet_b0(pretrained=True)
-efficientnet.classifier[1] = torch.nn.Linear(efficientnet.classifier[1].in_features, 8)
+efficientnet.classifier[1] = torch.nn.Linear(efficientnet.classifier[1].in_features, 9)
 train_model(efficientnet, "models/efficientnet.pth")
 
 # Train ResNet
 resnet = models.resnet18(pretrained=True)
-resnet.fc = torch.nn.Linear(resnet.fc.in_features, 8)
+resnet.fc = torch.nn.Linear(resnet.fc.in_features, 9)
 train_model(resnet, "models/resnet.pth")
 
 # Train MobileNet
 mobilenet = models.mobilenet_v3_small(pretrained=True)
-mobilenet.classifier[3] = torch.nn.Linear(mobilenet.classifier[3].in_features, 8)
+mobilenet.classifier[3] = torch.nn.Linear(mobilenet.classifier[3].in_features, 9)
 train_model(mobilenet, "models/mobilenet.pth")
 
 # Severity Model (Regression)
 severity_model = models.efficientnet_b0(pretrained=True)
 severity_model.classifier[1] = torch.nn.Linear(severity_model.classifier[1].in_features, 1)  # Regression output
 train_model(severity_model, "models/severity_model.pth", is_regression=True)
-

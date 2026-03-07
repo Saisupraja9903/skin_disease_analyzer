@@ -6,7 +6,6 @@ from typing import Dict
 import requests
 
 from services.symptoms import confirm_disease_with_symptoms, process_user_responses
-from services.out_of_class import detect_unknown_disease
 from apis.city_coordinates_api import get_city_coordinates
 from apis.nearby_hospitals_api import get_nearby_hospitals
 
@@ -62,9 +61,6 @@ async def upload_file(file: UploadFile = File(...)):
     top_predictions = data["predictions"][:8]
 
     print("✅ Predictions:", top_predictions)
-
-    if detect_unknown_disease(top_predictions):
-        return JSONResponse(content={"message": "Unknown disease detected."})
 
     questions = confirm_disease_with_symptoms(top_predictions)
 

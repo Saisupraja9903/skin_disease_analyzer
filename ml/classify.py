@@ -27,7 +27,7 @@ def _safe_load_model(path, num_classes=None):
     return mdl
 
 # Load full models directly (or dummy placeholders if the checkpoints are absent)
-num_labels = 8  # keep in sync with `classes` below
+num_labels = 9  # keep in sync with `classes` below
 efficientnet = _safe_load_model("models/efficientnet.pth", num_labels)
 resnet = _safe_load_model("models/resnet.pth", num_labels)
 mobilenet = _safe_load_model("models/mobilenet.pth", num_labels)
@@ -45,6 +45,7 @@ classes = [
     "Shingles",
     "Athlete-foot",
     "Nail-fungus",
+    "Psoriasis",
 ]
 
 # Preprocess the image

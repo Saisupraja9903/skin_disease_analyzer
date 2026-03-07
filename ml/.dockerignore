@@ -17,6 +17,7 @@ Dockerfile
 .gitignore
 
 # Ignore OS/Editor specific
+
 *.swp
 *.swo
 *.DS_Store

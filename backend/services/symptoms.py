@@ -205,7 +205,7 @@ SYMPTOM_MAPPING = {
     "Nail-fungus": ["thickened nails", "nail discoloration", "brittle nails", "bad odor"],
 
     # --- Diseases for future model versions ---
-    # "Psoriasis": ["red patches", "silvery scales", "dry skin", "itching"],
+    "Psoriasis": ["red patches", "silvery scales", "dry skin", "itching"],
     # "Eczema": ["dry skin", "itching", "red rash", "skin inflammation"],
     # "Acne": ["pimples", "blackheads", "whiteheads", "oily skin"],
     # "Rosacea": ["facial redness", "visible blood vessels", "skin irritation"],
@@ -275,27 +275,34 @@ def process_user_responses(answers):
 
     diseases = pending_symptom_check["diseases"]
 
-    symptom_scores = {disease: 0 for disease in diseases}
-
     print("User Answers:", answers)
 
+    # Calculate raw scores (count of matching symptoms)
+    raw_scores = {disease: 0 for disease in diseases}
     for disease in diseases:
         if disease in SYMPTOM_MAPPING:
             for symptom in SYMPTOM_MAPPING[disease]:
                 if symptom in answers and answers[symptom] == "1":
-                    symptom_scores[disease] += 1
+                    raw_scores[disease] += 1
 
-    print("Disease Scores:", symptom_scores)
+    # Normalize scores to get a percentage match for each disease
+    normalized_scores = {}
+    for disease in diseases:
+        total_symptoms = len(SYMPTOM_MAPPING.get(disease, []))
+        if total_symptoms > 0:
+            normalized_scores[disease] = raw_scores[disease] / total_symptoms
+        else:
+            normalized_scores[disease] = 0
 
-    # Always choose the highest scoring disease
-    confirmed_disease = max(symptom_scores, key=symptom_scores.get)
+    print("Disease Raw Scores:", raw_scores)
+    print("Disease Normalized Scores:", normalized_scores)
 
-    total_symptoms = len(SYMPTOM_MAPPING.get(confirmed_disease, []))
+    # Find the disease with the highest percentage match.
+    # In case of a tie, max() returns the first one encountered, which is the
+    # one with the highest confidence from the initial ML model prediction.
+    confirmed_disease = max(normalized_scores, key=normalized_scores.get, default=diseases[0] if diseases else "Unknown")
 
-    if total_symptoms == 0:
-        return confirmed_disease, "Out of Class"
-
-    severity_percentage = symptom_scores[confirmed_disease] / total_symptoms
+    severity_percentage = normalized_scores.get(confirmed_disease, 0)
 
     if severity_percentage < 0.25:
         severity = "Mild"

@@ -167,6 +167,7 @@ async def get_disease_info(request: Request):
             f"Include:\n"
             f"- External and internal symptoms (bullet points)\n"
             f"- Care instructions\n"
+            f"- Other potential diseases with similar symptoms (Differential Diagnosis)\n"
         )
 
         try:

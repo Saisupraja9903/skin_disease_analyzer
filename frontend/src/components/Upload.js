@@ -501,7 +501,7 @@ setFinalReport(response.data);
           <p><b>Disease:</b> {finalReport.disease}</p>
           <p><b>Severity:</b> {finalReport.severity}</p>
 
-          <h3>Symptoms & Care</h3>
+          <h3>Detailed Analysis & Related Conditions</h3>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {finalReport.symptoms_care}
           </ReactMarkdown>
